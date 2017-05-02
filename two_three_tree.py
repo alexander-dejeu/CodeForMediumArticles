@@ -82,21 +82,42 @@ class TwoThreeTree(object):
 
     def split_node(self, value, node):
         if node == self.root:
-            #TODO: This doesnt actually work?
-            node.add_data(value)
-            data_to_promote = node.data[1]
-            new_root = Node(data_to_promote)
-            node_left = Node(node.data[0])
-            node_right = Node(node.data[2])
+            if len(node.children) == 4:
+                # this means there are child relationships to worry about
+                if node.data[0] > value:
+                    print("LEFT Side is heavy on the children")
+                    node.add_data(value)
+                    data_to_promote = node.data[1]
+                    new_root = Node(data_to_promote)
+                    node_left, node_right = Node(node.data[0]), Node(node.data[2])
+                    node_left.parent_node, node_right.parent_node = new_root, new_root
 
-            node_left.parent_node = new_root
-            node_right.parent_node = new_root
+                    node_left.children = [node.children[0], node.children[1]]
+                    node_right.children = [node.children[2], node.children[3]]
 
-            new_root.children = [node_left, node_right]
+                    new_root.children = [node_left, node_right]
+                    self.root = new_root
 
-            self.root = new_root
+                else:
+                    print("Well shit...got to do this too")
 
-            print("got to make a new root")
+
+            else:
+                #TODO: This doesnt actually work?
+                node.add_data(value)
+                data_to_promote = node.data[1]
+                new_root = Node(data_to_promote)
+                node_left = Node(node.data[0])
+                node_right = Node(node.data[2])
+
+                node_left.parent_node = new_root
+                node_right.parent_node = new_root
+
+                new_root.children = [node_left, node_right]
+
+                self.root = new_root
+
+                print("got to make a new root")
         else:
             print(node)
             node.add_data(value)
@@ -117,7 +138,30 @@ class TwoThreeTree(object):
                     node.parent_node.children = new_children
                     node.parent_node.add_data(data_to_promote)
             else:
-                self.split_node(data_to_promote, node.parent_node)
+                if data_to_promote >= node.parent_node.data[0]:
+                    print("new data goes on right")
+                    self.split_node(data_to_promote, node.parent_node)
+                else:
+                    # Split the current node into 2 and push up the middle?
+                    print("123123123123121313")
+                    print("NODE ", node)
+                    print("PAR ", node.parent_node)
+                    new_l_node = Node(node.data[0])
+                    new_r_node = Node(node.data[1])
+                    new_l_node.parent_node = node.parent_node
+                    new_r_node.parent_node = node.parent_node
+
+                    node.parent_node.children.remove(node)
+                    node.parent_node.children.insert(0, new_r_node)
+                    node.parent_node.children.insert(0, new_l_node)
+
+                    #TODO: I think I can delete the original node :O
+                    print("UPDATEd NODE ", node)
+                    print("UPDATED PAR ", node.parent_node)
+                    print("L Child", new_r_node)
+                    # Split current node into two (no middle element)
+                    # delete old child connection and replace with 2 new
+                    self.split_node(data_to_promote, node.parent_node)
             print("yeah just push that shit up")
 
 
@@ -198,3 +242,4 @@ test_tree.insert(1)
 print("***********Proof it can move right up 3 depth*************")
 print(test_tree.root)
 print(test_tree.root.children[0])
+print(test_tree.root.children[1])
