@@ -67,8 +67,18 @@ class TwoThreeTree(object):
                     print("go right")
                     return self.find_node_value_belongs(value, node.children[1])
             else:
-                for index in range(data_count):
-                    print(index)
+                # Is it less than any value we have in children?
+                if value < node.data[0]:
+                    return self.find_node_value_belongs(value, node.children[0])
+                elif value > node.data[data_count - 1]:
+                    return self.find_node_value_belongs(value, node.children[len(node.children) - 1])
+                else:
+                    print("mmm")
+                    for index in range(data_count - 1):
+                        print(index)
+                        if value >= node.data[index] and value < node.data[index + 1]:
+                            return self.find_node_value_belongs(value, node.children[index+1])
+
 
     def split_node(self, value, node):
         if node == self.root:
@@ -88,6 +98,7 @@ class TwoThreeTree(object):
 
             print("got to make a new root")
         else:
+            print(node)
             node.add_data(value)
             data_to_promote = node.data[1]
             node.data.remove(node.data[1])
@@ -96,8 +107,9 @@ class TwoThreeTree(object):
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
                 else:
-                    print("new data goes on left")
                     node_left, node_middle = Node(node.data[0]), Node(node.data[1])
+                    node_left.parent_node = node.parent_node
+                    node_middle.parent_node = node.parent_node
                     new_children = [node_left, node_middle]
                     for item in node.parent_node.children:
                         new_children.append(item)
@@ -152,12 +164,12 @@ test_tree.insert(4)
 # print(test_tree)
 
 test_tree.insert(30)
-print(test_tree)
-print(test_tree.root)
+# print(test_tree)
+# print(test_tree.root)
 
 test_tree.insert(7)
 # print(test_tree)
-print(test_tree.root)
+# print(test_tree.root)
 
 
 test_tree.insert(5)
@@ -167,6 +179,22 @@ test_tree.insert(3)
 
 # print("************************")
 # print(test_tree.root)
-print("************************")
-print(test_tree.root)
 test_tree.insert(6)
+# print("**********Proper Middle Element Finding**********")
+# print(test_tree.root)
+
+test_tree.insert(2)
+test_tree.insert(36)
+# print("***********Proof it can fill up 2 depth*************")
+# print(test_tree.root)
+print("1111111111111")
+print(test_tree.root.children[0])
+print("3333333333333")
+print(test_tree.root.children[1])
+print("222222222222")
+print(test_tree.root.children[2])
+
+test_tree.insert(1)
+print("***********Proof it can move right up 3 depth*************")
+print(test_tree.root)
+print(test_tree.root.children[0])
