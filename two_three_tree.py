@@ -92,18 +92,23 @@ class TwoThreeTree(object):
                     node_left, node_right = Node(node.data[0]), Node(node.data[2])
                     node_left.parent_node, node_right.parent_node = new_root, new_root
 
+                    node.children[0].parent_node = node_left
+                    node.children[1].parent_node = node_left
+                    node.children[2].parent_node = node_right
+                    node.children[3].parent_node = node_right
+                    
                     node_left.children = [node.children[0], node.children[1]]
                     node_right.children = [node.children[2], node.children[3]]
+
 
                     new_root.children = [node_left, node_right]
                     self.root = new_root
 
+
                 else:
                     print("Well shit...got to do this too")
-
-
             else:
-                #TODO: This doesnt actually work?
+                # TODO: This doesnt actually work?
                 node.add_data(value)
                 data_to_promote = node.data[1]
                 new_root = Node(data_to_promote)
@@ -127,19 +132,39 @@ class TwoThreeTree(object):
             if len(node.parent_node.data) == 1:
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
+                    node_middle, node_right = Node(node.data[1]), Node(node.data[2])
+                    node_right.parent_node = node.parent_node
+                    node_middle.parent_node = node.parent_node
+                    new_children = [node.parent_node.children[0], node_middle, node_right]
+                    node.parent_node.children = new_children
+                    node.parent_node.add_data(data_to_promote)
                 else:
+                    print("THB")
                     node_left, node_middle = Node(node.data[0]), Node(node.data[1])
                     node_left.parent_node = node.parent_node
                     node_middle.parent_node = node.parent_node
-                    new_children = [node_left, node_middle]
-                    for item in node.parent_node.children:
-                        new_children.append(item)
-                    del new_children[2]
+                    new_children = [node_left, node_middle, node.parent_node.children[1]]
+
                     node.parent_node.children = new_children
                     node.parent_node.add_data(data_to_promote)
             else:
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
+                    new_m_node = Node(node.data[0])
+                    new_r_node = Node(node.data[1])
+                    new_m_node.parent_node = node.parent_node
+                    new_r_node.parent_node = node.parent_node
+
+                    node.parent_node.children.remove(node)
+                    node.parent_node.children.append(new_m_node)
+                    node.parent_node.children.append(new_r_node)
+
+                    #TODO: I think I can delete the original node :O
+                    print("UPDATEd NODE ", node)
+                    print("UPDATED PAR ", node.parent_node)
+                    print("R Child", new_r_node)
+                    # Split current node into two (no middle element)
+                    # delete old child connection and replace with 2 new
                     self.split_node(data_to_promote, node.parent_node)
                 else:
                     # Split the current node into 2 and push up the middle?
@@ -224,22 +249,33 @@ test_tree.insert(3)
 # print("************************")
 # print(test_tree.root)
 test_tree.insert(6)
-# print("**********Proper Middle Element Finding**********")
-# print(test_tree.root)
+print("**********Proper Middle Element Finding**********")
+print(test_tree.root)
+print(test_tree.root.children[1])
 
 test_tree.insert(2)
 test_tree.insert(36)
 # print("***********Proof it can fill up 2 depth*************")
 # print(test_tree.root)
-print("1111111111111")
-print(test_tree.root.children[0])
-print("3333333333333")
-print(test_tree.root.children[1])
-print("222222222222")
-print(test_tree.root.children[2])
+# print("1111111111111")
+# print(test_tree.root.children[0])
+# print("3333333333333")
+# print(test_tree.root.children[1])
+# print("222222222222")
+# print(test_tree.root.children[2])
 
 test_tree.insert(1)
 print("***********Proof it can move right up 3 depth*************")
 print(test_tree.root)
 print(test_tree.root.children[0])
 print(test_tree.root.children[1])
+print("*******************")
+print(test_tree.root.children[0].children[0])
+print(test_tree.root.children[0].children[1])
+print(test_tree.root.children[1].children[0])
+print(test_tree.root.children[1].children[1])
+# # test_tree.insert(40)
+# # print("***********Proof it can move right up 3 depth*************")
+# # print(test_tree.root)
+# # print(test_tree.root.children[0])
+# # print(test_tree.root.children[1])
