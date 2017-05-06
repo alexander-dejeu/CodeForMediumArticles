@@ -84,7 +84,7 @@ class TwoThreeTree(object):
         if node == self.root:
             if len(node.children) == 4:
                 # this means there are child relationships to worry about
-                if node.data[0] > value:
+                # if node.data[0] > value:
                     print("LEFT Side is heavy on the children")
                     node.add_data(value)
                     data_to_promote = node.data[1]
@@ -96,7 +96,7 @@ class TwoThreeTree(object):
                     node.children[1].parent_node = node_left
                     node.children[2].parent_node = node_right
                     node.children[3].parent_node = node_right
-                    
+
                     node_left.children = [node.children[0], node.children[1]]
                     node_right.children = [node.children[2], node.children[3]]
 
@@ -105,8 +105,8 @@ class TwoThreeTree(object):
                     self.root = new_root
 
 
-                else:
-                    print("Well shit...got to do this too")
+                # else:
+                #     print("Well shit...got to do this too")
             else:
                 # TODO: This doesnt actually work?
                 node.add_data(value)
@@ -132,7 +132,7 @@ class TwoThreeTree(object):
             if len(node.parent_node.data) == 1:
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
-                    node_middle, node_right = Node(node.data[1]), Node(node.data[2])
+                    node_middle, node_right = Node(node.data[0]), Node(node.data[1])
                     node_right.parent_node = node.parent_node
                     node_middle.parent_node = node.parent_node
                     new_children = [node.parent_node.children[0], node_middle, node_right]
@@ -159,10 +159,10 @@ class TwoThreeTree(object):
                     node.parent_node.children.append(new_m_node)
                     node.parent_node.children.append(new_r_node)
 
-                    #TODO: I think I can delete the original node :O
-                    print("UPDATEd NODE ", node)
-                    print("UPDATED PAR ", node.parent_node)
-                    print("R Child", new_r_node)
+                    # #TODO: I think I can delete the original node :O
+                    # print("UPDATEd NODE ", node)
+                    # print("UPDATED PAR ", node.parent_node)
+                    # print("R Child", new_r_node)
                     # Split current node into two (no middle element)
                     # delete old child connection and replace with 2 new
                     self.split_node(data_to_promote, node.parent_node)
@@ -265,17 +265,20 @@ test_tree.insert(36)
 # print(test_tree.root.children[2])
 
 test_tree.insert(1)
+# print("***********Proof it can move right up 3 depth*************")
+# print(test_tree.root)
+# print(test_tree.root.children[0])
+# print(test_tree.root.children[1])
+# print("*******************")
+# print(test_tree.root.children[0].children[0])
+# print(test_tree.root.children[0].children[1])
+# print(test_tree.root.children[1].children[0])
+# print(test_tree.root.children[1].children[1])
+test_tree.insert(40)
 print("***********Proof it can move right up 3 depth*************")
 print(test_tree.root)
 print(test_tree.root.children[0])
 print(test_tree.root.children[1])
-print("*******************")
-print(test_tree.root.children[0].children[0])
-print(test_tree.root.children[0].children[1])
 print(test_tree.root.children[1].children[0])
 print(test_tree.root.children[1].children[1])
-# # test_tree.insert(40)
-# # print("***********Proof it can move right up 3 depth*************")
-# # print(test_tree.root)
-# # print(test_tree.root.children[0])
-# # print(test_tree.root.children[1])
+print(test_tree.root.children[1].children[2])
