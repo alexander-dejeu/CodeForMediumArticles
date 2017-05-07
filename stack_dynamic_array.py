@@ -30,9 +30,18 @@ class Stack_Dynamic_Array(object):
         del self.data[0]
         return head
 
-    def peak(self):
+    def peek(self):
         """Return the top item on this stack without removing it,
         or None if this stack is empty"""
         if self.is_empty():
             return None
         return self.data[0]
+
+
+DA_Stack = Stack_Dynamic_Array()
+DA_Stack.push(5)
+DA_Stack.push(6)
+DA_Stack.push(7)
+print(DA_Stack.peek())
+print(DA_Stack.pop())
+print(DA_Stack.peek())
