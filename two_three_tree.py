@@ -13,6 +13,7 @@ class Node(object):
             self.children = list(children)
         else:
             self.children = []
+
         self.parent_node = parent_node
 
     def add_data(self, value):
@@ -69,7 +70,6 @@ class TwoThreeTree(object):
                 result_str += '\n'
                 if len(node.children) != 0:
                     level_end_node = node.children[len(node.children) - 1]
-                print(level_end_node)
         return result_str
 
     def find_node_value_belongs(self, value, node):
@@ -77,32 +77,22 @@ class TwoThreeTree(object):
             return node
         else:
             data_count = len(node.data)
-            if data_count == 1:
-                if value < node.data[0]:
-                    print("go left")
-                    return self.find_node_value_belongs(value, node.children[0])
-                else:
-                    print("go right")
-                    return self.find_node_value_belongs(value, node.children[1])
+            if value < node.data[0]:
+                return self.find_node_value_belongs(value, node.children[0])
+            # Is value greater than any existing value in children
+            elif value > node.data[data_count - 1]:
+                return self.find_node_value_belongs(value, node.children[len(node.children) - 1])
+            # Otherwise we have to ping through looking for a valid spot
             else:
-                # Is it less than any value we have in children?
-                if value < node.data[0]:
-                    return self.find_node_value_belongs(value, node.children[0])
-                elif value > node.data[data_count - 1]:
-                    return self.find_node_value_belongs(value, node.children[len(node.children) - 1])
-                else:
-                    print("mmm")
-                    for index in range(data_count - 1):
-                        print(index)
-                        if value >= node.data[index] and value < node.data[index + 1]:
-                            return self.find_node_value_belongs(value, node.children[index+1])
-                    return self.find_node_value_belongs(value, node.children[data_count - 1])
+                for index in range(data_count - 1):
+                    if value >= node.data[index] and value < node.data[index + 1]:
+                        return self.find_node_value_belongs(value, node.children[index+1])
+                return self.find_node_value_belongs(value, node.children[data_count - 1])
 
     def split_node(self, value, node):
         if node == self.root:
             if len(node.children) == 4:
                 # this means there are child relationships to worry about
-                # if node.data[0] > value:
                 node.add_data(value)
                 data_to_promote = node.data[1]
                 new_root = Node(data_to_promote)
@@ -121,7 +111,7 @@ class TwoThreeTree(object):
                 self.root = new_root
 
             else:
-                # TODO: This doesnt actually work?
+                # Creating the intial root
                 node.add_data(value)
                 data_to_promote = node.data[1]
                 new_root = Node(data_to_promote)
@@ -135,95 +125,48 @@ class TwoThreeTree(object):
 
                 self.root = new_root
 
-                print("got to make a new root")
         else:
-            print(node)
+            # Not dealing with creating a new root
             node.add_data(value)
             data_to_promote = node.data[1]
             node.data.remove(node.data[1])
 
             if len(node.parent_node.data) == 1:
-                if data_to_promote >= node.parent_node.data[0]:
-                    print("new data goes on right")
-                    print("AEX")
-                    print(len(node.children))
-                    node_middle, node_right = Node(node.data[0]), Node(node.data[1])
-                    node_right.parent_node = node.parent_node
-                    node_middle.parent_node = node.parent_node
+                    node_one, node_two = Node(node.data[0]), Node(node.data[1])
+                    node_one.parent_node = node.parent_node
+                    node_two.parent_node = node.parent_node
                     if len(node.children) != 0:
-                        node.children[0].parent_node = node_middle
-                        node.children[1].parent_node = node_middle
-                        node.children[2].parent_node = node_right
-                        node.children[3].parent_node = node_right
+                        node.children[0].parent_node = node_one
+                        node.children[1].parent_node = node_one
+                        node.children[2].parent_node = node_two
+                        node.children[3].parent_node = node_two
 
-                        node_middle.children = [node.children[0], node.children[1]]
-                        node_right.children = [node.children[2], node.children[3]]
+                        node_one.children = [node.children[0], node.children[1]]
+                        node_two.children = [node.children[2], node.children[3]]
 
-                    new_children = [node.parent_node.children[0], node_middle, node_right]
-                    node.parent_node.children = new_children
-
-                    node.parent_node.add_data(data_to_promote)
-                else:
-
-                    node_left, node_middle = Node(node.data[0]), Node(node.data[1])
-                    node_left.parent_node = node.parent_node
-                    node_middle.parent_node = node.parent_node
-                    if len(node.children) != 0:
-                        node.children[0].parent_node = node_left
-                        node.children[1].parent_node = node_left
-                        node.children[2].parent_node = node_middle
-                        node.children[3].parent_node = node_middle
-
-                        node_left.children = [node.children[0], node.children[1]]
-                        node_middle.children = [node.children[2], node.children[3]]
-
-                    new_children = [node_left, node_middle, node.parent_node.children[1]]
-
+                    new_children = []
+                    if data_to_promote >= node.parent_node.data[0]:
+                        new_children = [node.parent_node.children[0], node_one, node_two]
+                    else:
+                        new_children = [node_one, node_two, node.parent_node.children[1]]
                     node.parent_node.children = new_children
                     node.parent_node.add_data(data_to_promote)
             else:
+                new_l_node = Node(node.data[0])
+                new_r_node = Node(node.data[1])
+                new_l_node.parent_node = node.parent_node
+                new_r_node.parent_node = node.parent_node
+
+                node.parent_node.children.remove(node)
                 if data_to_promote >= node.parent_node.data[0]:
-                    print("new data goes on right")
-                    print("here we fuck up?")
-                    print(node)
-                    new_m_node = Node(node.data[0])
-                    new_r_node = Node(node.data[1])
-                    new_m_node.parent_node = node.parent_node
-                    new_r_node.parent_node = node.parent_node
-
-                    node.parent_node.children.remove(node)
-                    node.parent_node.children.append(new_m_node)
+                    node.parent_node.children.append(new_l_node)
                     node.parent_node.children.append(new_r_node)
-
-                    print("Do we break the chuldren here?")
-                    print(node)
-                    # #TODO: I think I can delete the original node :O
-                    # print("UPDATEd NODE ", node)
-                    # print("UPDATED PAR ", node.parent_node)
-                    # print("R Child", new_r_node)
-                    # Split current node into two (no middle element)
-                    # delete old child connection and replace with 2 new
-                    self.split_node(data_to_promote, node.parent_node)
                 else:
-                    # Split the current node into 2 and push up the middle?
-                    print("NODE ", node)
-                    print("PAR ", node.parent_node)
-                    new_l_node = Node(node.data[0])
-                    new_r_node = Node(node.data[1])
-                    new_l_node.parent_node = node.parent_node
-                    new_r_node.parent_node = node.parent_node
-
-                    node.parent_node.children.remove(node)
                     node.parent_node.children.insert(0, new_r_node)
                     node.parent_node.children.insert(0, new_l_node)
-
-                    #TODO: I think I can delete the original node :O
-                    print("UPDATEd NODE ", node)
-                    print("UPDATED PAR ", node.parent_node)
-                    print("R Child", new_r_node)
-                    # Split current node into two (no middle element)
-                    # delete old child connection and replace with 2 new
-                    self.split_node(data_to_promote, node.parent_node)
+                # Split current node into two (no middle element)
+                # delete old child connection and replace with 2 new
+                self.split_node(data_to_promote, node.parent_node)
 
     def insert(self, value):
         ''' 1. If the tree is empty, create a node and put value into the node
@@ -235,7 +178,7 @@ class TwoThreeTree(object):
             5. If the parent then has three values, continue to split and
                 promote, forming a new root node if necessary
         '''
-        print("INSERT: " + str(value))
+
         # 1. If the tree is empty
         if self.root is None:
             self.root = Node(value)
@@ -243,7 +186,6 @@ class TwoThreeTree(object):
 
         # 2. Find leaf where value belongs
         add_to_leaf = self.find_node_value_belongs(value, self.root)
-        print(add_to_leaf)
 
         # 3. If leaf only has one value put the new value there!
         if len(add_to_leaf.data) == 1:
@@ -257,6 +199,24 @@ class TwoThreeTree(object):
 
     def search(self, value):
         pass
+        cur_node = self.root
+        while cur_node is not None:
+            if value in cur_node.data:
+                return True
+            elif len(cur_node.children) == 0:
+                return False
+            else:
+                if value < cur_node.data[0]:
+                    cur_node = cur_node.children[0]
+                elif value > cur_node.data[len(cur_node.data) - 1]:
+                    cur_node = cur_node.children[len(cur_node.data) - 1]
+                else:
+                    for index in range(len(cur_node.data) - 1):
+                        if value >= cur_node.data[index] and value < cur_node.data[index + 1]:
+                            cur_node = cur_node.children[index+1]
+
+                    cur_node = cur_node.children[len(cur_node.data) - 1]
+
 
 
 test_tree = TwoThreeTree()
@@ -269,30 +229,8 @@ test_tree.insert(3)
 test_tree.insert(6)
 test_tree.insert(2)
 test_tree.insert(36)
-# print("***********Proof it can fill up 2 depth*************")
-# print(test_tree.root)
-# print(test_tree.root.children[0])
-# print(test_tree.root.children[1])
-# print(test_tree.root.children[2])
-
 test_tree.insert(1)
-# print("***********Proof it can move right up 3 depth*************")
-# print(test_tree.root)
-# print(test_tree.root.children[0])
-# print(test_tree.root.children[1])
-# print("*******************")
-# print(test_tree.root.children[0].children[0])
-# print(test_tree.root.children[0].children[1])
-# print(test_tree.root.children[1].children[0])
-# print(test_tree.root.children[1].children[1])
 test_tree.insert(40)
-# print("***********Proof it can move right up 3 depth*************")
-# print(test_tree.root)
-# print(test_tree.root.children[0])
-# print(test_tree.root.children[1])
-# print(test_tree.root.children[1].children[0])
-# print(test_tree.root.children[1].children[1])
-# print(test_tree.root.children[1].children[2])
 
 test_tree.insert(0)
 test_tree.insert(3)
@@ -303,14 +241,5 @@ test_tree.insert(1)
 test_tree.insert(0)
 test_tree.insert(2)
 test_tree.insert(45)
-
-
-
-print("***********Proof it can fill up 3 depth*************")
 print(test_tree)
-# print(test_tree.root)
-# print(test_tree.root.children[0])
-# print(test_tree.root.children[1])
-# print(test_tree.root.children[0].children[0])
-print(test_tree.root.children[2])
-# print(test_tree.root.children[0].children[2])
+print(test_tree.search(3))

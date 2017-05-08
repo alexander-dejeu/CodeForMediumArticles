@@ -34,31 +34,6 @@ class NodeTest(unittest.TestCase):
 
 
 class TwoThreeTreeTest(unittest.TestCase):
-
-
-    '''
-
-
-    test_tree.insert(1)
-    # print("***********Proof it can move right up 3 depth*************")
-    # print(test_tree.root)
-    # print(test_tree.root.children[0])
-    # print(test_tree.root.children[1])
-    # print("*******************")
-    # print(test_tree.root.children[0].children[0])
-    # print(test_tree.root.children[0].children[1])
-    # print(test_tree.root.children[1].children[0])
-    # print(test_tree.root.children[1].children[1])
-    test_tree.insert(40)
-    print("***********Proof it can move right up 3 depth*************")
-    print(test_tree.root)
-    print(test_tree.root.children[0])
-    print(test_tree.root.children[1])
-    print(test_tree.root.children[1].children[0])
-    print(test_tree.root.children[1].children[1])
-    print(test_tree.root.children[1].children[2])
-
-    '''
     def test_init(self):
         ttt = TwoThreeTree()
         assert ttt.root is None
@@ -242,6 +217,48 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
         assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
 
+    def test_search(self):
+        ttt = TwoThreeTree()
+        ttt.insert(4)
+        ttt.insert(30)
+        ttt.insert(7)
+        ttt.insert(5)
+        ttt.insert(3)
+        ttt.insert(6)
+        ttt.insert(2)
+        ttt.insert(36)
+        ttt.insert(1)
+        ttt.insert(3)
+        ttt.insert(0)
+        ttt.insert(1)
+        ttt.insert(40)
+        ttt.insert(0)
+        ttt.insert(2)
+        ttt.insert(25)
+        ttt.insert(41)
+        ttt.insert(45)
+
+        assert ttt.search(4) is True
+        assert ttt.search(30) is True
+        assert ttt.search(7) is True
+        assert ttt.search(5) is True
+        assert ttt.search(3) is True
+        assert ttt.search(6) is True
+        assert ttt.search(2) is True
+        assert ttt.search(36) is True
+        assert ttt.search(1) is True
+        assert ttt.search(0) is True
+        assert ttt.search(40) is True
+        assert ttt.search(25) is True
+        assert ttt.search(41) is True
+        assert ttt.search(45) is True
+
+        assert ttt.search(12) is False
+        assert ttt.search(-4) is False
+        assert ttt.search(49) is False
+        assert ttt.search(57) is False
+        assert ttt.search(101) is False
+        assert ttt.search(124) is False
 
 if __name__ == '__main__':
     unittest.main()
