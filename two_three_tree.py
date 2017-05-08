@@ -1,4 +1,5 @@
-import queue
+import queue  # Uses queue for BFS of printing tree
+
 
 class Node(object):
     def __init__(self, data, children=None, parent_node=None):
@@ -36,7 +37,6 @@ class TwoThreeTree(object):
         self.root = None
 
     def __str__(self):
-        # self.inorder_print(self.root)
         return self.level_order_print(self.root)
 
     def inorder_print(self, node):
@@ -57,15 +57,19 @@ class TwoThreeTree(object):
         result_str = ""
         level_q = queue.Queue()
         level_q.put(node)
-        result_str += str(node.data)
-        result_str += '\n'
 
+        level_end_node = node
         while not level_q.empty():
             node = level_q.get()
-            for child in node.children:
-                result_str += str(child.data) + ", "
+            result_str += str(node.data) + ", "
+            for i in range(len(node.children)):
+                child = node.children[i]
                 level_q.put(child)
-            result_str += '\n'
+            if node == level_end_node:
+                result_str += '\n'
+                if len(node.children) != 0:
+                    level_end_node = node.children[len(node.children) - 1]
+                print(level_end_node)
         return result_str
 
     def find_node_value_belongs(self, value, node):
@@ -141,16 +145,38 @@ class TwoThreeTree(object):
             if len(node.parent_node.data) == 1:
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
+                    print("AEX")
+                    print(len(node.children))
                     node_middle, node_right = Node(node.data[0]), Node(node.data[1])
                     node_right.parent_node = node.parent_node
                     node_middle.parent_node = node.parent_node
+                    if len(node.children) != 0:
+                        node.children[0].parent_node = node_middle
+                        node.children[1].parent_node = node_middle
+                        node.children[2].parent_node = node_right
+                        node.children[3].parent_node = node_right
+
+                        node_middle.children = [node.children[0], node.children[1]]
+                        node_right.children = [node.children[2], node.children[3]]
+
                     new_children = [node.parent_node.children[0], node_middle, node_right]
                     node.parent_node.children = new_children
+
                     node.parent_node.add_data(data_to_promote)
                 else:
+
                     node_left, node_middle = Node(node.data[0]), Node(node.data[1])
                     node_left.parent_node = node.parent_node
                     node_middle.parent_node = node.parent_node
+                    if len(node.children) != 0:
+                        node.children[0].parent_node = node_left
+                        node.children[1].parent_node = node_left
+                        node.children[2].parent_node = node_middle
+                        node.children[3].parent_node = node_middle
+
+                        node_left.children = [node.children[0], node.children[1]]
+                        node_middle.children = [node.children[2], node.children[3]]
+
                     new_children = [node_left, node_middle, node.parent_node.children[1]]
 
                     node.parent_node.children = new_children
@@ -158,6 +184,8 @@ class TwoThreeTree(object):
             else:
                 if data_to_promote >= node.parent_node.data[0]:
                     print("new data goes on right")
+                    print("here we fuck up?")
+                    print(node)
                     new_m_node = Node(node.data[0])
                     new_r_node = Node(node.data[1])
                     new_m_node.parent_node = node.parent_node
@@ -167,6 +195,8 @@ class TwoThreeTree(object):
                     node.parent_node.children.append(new_m_node)
                     node.parent_node.children.append(new_r_node)
 
+                    print("Do we break the chuldren here?")
+                    print(node)
                     # #TODO: I think I can delete the original node :O
                     # print("UPDATEd NODE ", node)
                     # print("UPDATED PAR ", node.parent_node)
@@ -272,6 +302,7 @@ test_tree.insert(41)
 test_tree.insert(1)
 test_tree.insert(0)
 test_tree.insert(2)
+test_tree.insert(45)
 
 
 
@@ -281,5 +312,5 @@ print(test_tree)
 # print(test_tree.root.children[0])
 # print(test_tree.root.children[1])
 # print(test_tree.root.children[0].children[0])
-# print(test_tree.root.children[0].children[1])
+print(test_tree.root.children[2])
 # print(test_tree.root.children[0].children[2])

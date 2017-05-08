@@ -172,7 +172,7 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
         assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
 
-    def ignore_test_fill_full_three_level(self):
+    def test_fill_full_three_level(self):
         ttt = TwoThreeTree()
         ttt.insert(4)
         ttt.insert(30)
@@ -204,7 +204,7 @@ class TwoThreeTreeTest(unittest.TestCase):
 
     # At this point we are feeling better with the tests because we know
     # our split function can split a few times up the tree without fail
-    def ignore_test_full_three_level_split(self):
+    def test_full_three_level_split(self):
         ttt = TwoThreeTree()
         ttt.insert(4)
         ttt.insert(30)
@@ -224,11 +224,23 @@ class TwoThreeTreeTest(unittest.TestCase):
         ttt.insert(25)
         ttt.insert(41)
         ttt.insert(45)
+        # Pushed data up to the root correctly
         assert len(ttt.root.data) == 2
         assert ttt.root.data[0] == 4
         assert ttt.root.data[1] == 36
+
+        # Make sure the 2nd layer data looks right
+        assert len(ttt.root.children[0].data) == 2
+        assert ttt.root.children[1].data[0] == 7
         assert ttt.root.children[2].data[0] == 41
+
+        # Make sure the childen's parent relationships are correct
         assert ttt.root.children[2].parent_node is ttt.root
+        assert ttt.root.children[2].children[0].parent_node is ttt.root.children[2]
+        assert ttt.root.children[2].children[1].parent_node is ttt.root.children[2]
+
+        assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
+        assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
 
 
 if __name__ == '__main__':
