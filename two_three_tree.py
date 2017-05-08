@@ -1,3 +1,5 @@
+import queue
+
 class Node(object):
     def __init__(self, data, children=None, parent_node=None):
         if type(data) is list:
@@ -34,8 +36,8 @@ class TwoThreeTree(object):
         self.root = None
 
     def __str__(self):
-        self.inorder_print(self.root)
-        return "representation"
+        # self.inorder_print(self.root)
+        return self.level_order_print(self.root)
 
     def inorder_print(self, node):
         child_count = len(node.children)
@@ -50,6 +52,21 @@ class TwoThreeTree(object):
                 else:
                     self.inorder_print(node.children[index])
                     print(node.data[index])
+
+    def level_order_print(self, node):
+        result_str = ""
+        level_q = queue.Queue()
+        level_q.put(node)
+        result_str += str(node.data)
+        result_str += '\n'
+
+        while not level_q.empty():
+            node = level_q.get()
+            for child in node.children:
+                result_str += str(child.data) + ", "
+                level_q.put(child)
+            result_str += '\n'
+        return result_str
 
     def find_node_value_belongs(self, value, node):
         if len(node.children) == 0:
@@ -75,6 +92,7 @@ class TwoThreeTree(object):
                         print(index)
                         if value >= node.data[index] and value < node.data[index + 1]:
                             return self.find_node_value_belongs(value, node.children[index+1])
+                    return self.find_node_value_belongs(value, node.children[data_count - 1])
 
     def split_node(self, value, node):
         if node == self.root:
@@ -212,39 +230,19 @@ class TwoThreeTree(object):
 
 
 test_tree = TwoThreeTree()
+
 test_tree.insert(4)
-# print(test_tree)
-
 test_tree.insert(30)
-# print(test_tree)
-# print(test_tree.root)
-
 test_tree.insert(7)
-# print(test_tree)
-# print(test_tree.root)
-
-
 test_tree.insert(5)
-# print("************************")
-# print(test_tree.root.children[0])
 test_tree.insert(3)
-
-# print("************************")
-# print(test_tree.root)
 test_tree.insert(6)
-print("**********Proper Middle Element Finding**********")
-print(test_tree.root)
-print(test_tree.root.children[1])
-
 test_tree.insert(2)
 test_tree.insert(36)
 # print("***********Proof it can fill up 2 depth*************")
 # print(test_tree.root)
-# print("1111111111111")
 # print(test_tree.root.children[0])
-# print("3333333333333")
 # print(test_tree.root.children[1])
-# print("222222222222")
 # print(test_tree.root.children[2])
 
 test_tree.insert(1)
@@ -258,10 +256,30 @@ test_tree.insert(1)
 # print(test_tree.root.children[1].children[0])
 # print(test_tree.root.children[1].children[1])
 test_tree.insert(40)
-print("***********Proof it can move right up 3 depth*************")
-print(test_tree.root)
-print(test_tree.root.children[0])
-print(test_tree.root.children[1])
-print(test_tree.root.children[1].children[0])
-print(test_tree.root.children[1].children[1])
-print(test_tree.root.children[1].children[2])
+# print("***********Proof it can move right up 3 depth*************")
+# print(test_tree.root)
+# print(test_tree.root.children[0])
+# print(test_tree.root.children[1])
+# print(test_tree.root.children[1].children[0])
+# print(test_tree.root.children[1].children[1])
+# print(test_tree.root.children[1].children[2])
+
+test_tree.insert(0)
+test_tree.insert(3)
+test_tree.insert(25)
+test_tree.insert(41)
+
+test_tree.insert(1)
+test_tree.insert(0)
+test_tree.insert(2)
+
+
+
+print("***********Proof it can fill up 3 depth*************")
+print(test_tree)
+# print(test_tree.root)
+# print(test_tree.root.children[0])
+# print(test_tree.root.children[1])
+# print(test_tree.root.children[0].children[0])
+# print(test_tree.root.children[0].children[1])
+# print(test_tree.root.children[0].children[2])
