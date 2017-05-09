@@ -197,25 +197,25 @@ class TwoThreeTree(object):
             # 5. Repeat on the parent - worse case form a new root.
             self.split_node(value, add_to_leaf)
 
-    def search(self, value):
-        pass
-        cur_node = self.root
-        while cur_node is not None:
-            if value in cur_node.data:
-                return True
-            elif len(cur_node.children) == 0:
-                return False
-            else:
-                if value < cur_node.data[0]:
-                    cur_node = cur_node.children[0]
-                elif value > cur_node.data[len(cur_node.data) - 1]:
-                    cur_node = cur_node.children[len(cur_node.data) - 1]
-                else:
-                    for index in range(len(cur_node.data) - 1):
-                        if value >= cur_node.data[index] and value < cur_node.data[index + 1]:
-                            cur_node = cur_node.children[index+1]
-
-                    cur_node = cur_node.children[len(cur_node.data) - 1]
+    # def search(self, value):
+    #     cur_node = self.root
+    #     while cur_node is not None:
+    #         print(cur_node.data)
+    #         if value in cur_node.data:
+    #             return True
+    #         elif len(cur_node.children) == 0:
+    #             return False
+    #         else:
+    #             if value < cur_node.data[0]:
+    #                 cur_node = cur_node.children[0]
+    #             elif value > cur_node.data[len(cur_node.data) - 1]:
+    #                 cur_node = cur_node.children[len(cur_node.data)]
+    #             else:
+    #                 for index in range(len(cur_node.data) - 1):
+    #                     if value >= cur_node.data[index] and value < cur_node.data[index + 1]:
+    #                         cur_node = cur_node.children[index+1]
+    #
+    #                 cur_node = cur_node.children[len(cur_node.data) - 1]
 
 
 
@@ -242,4 +242,4 @@ test_tree.insert(0)
 test_tree.insert(2)
 test_tree.insert(45)
 print(test_tree)
-print(test_tree.search(3))
+# print(test_tree.search(30))
