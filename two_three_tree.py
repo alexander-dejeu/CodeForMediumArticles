@@ -2,7 +2,9 @@ import queue  # Uses queue for BFS of printing tree
 
 
 class Node(object):
+    # Node(a,b,c, children)
     def __init__(self, data, children=None, parent_node=None):
+        # self.data = list(data)
         if type(data) is list:
             self.data = data
         else:
@@ -20,6 +22,8 @@ class Node(object):
         self.data.append(value)
         self.data.sort()
 
+    # Use __repr__ for printing the code that a programer could use
+    # Put this for the pretty side
     def __str__(self):
         data_str = ""
         for item in self.data:
@@ -128,14 +132,20 @@ class TwoThreeTree(object):
         else:
             # Not dealing with creating a new root
             node.add_data(value)
+            # The second element is always the middle element because at this
+            # point we know this is a leaf with 2 items and we just added another
+            # 3 can be generalized to b
+            assert len(node.data) == 3
             data_to_promote = node.data[1]
             node.data.remove(node.data[1])
 
             if len(node.parent_node.data) == 1:
-                    node_one, node_two = Node(node.data[0]), Node(node.data[1])
+                    nodes = node_one, node_two = Node(node.data[0]), Node(node.data[1])
                     node_one.parent_node = node.parent_node
                     node_two.parent_node = node.parent_node
-                    if len(node.children) != 0:
+                    # for the_node in nodes:
+                    #     the_node.parent_node = node.parent_node
+                    if len(node.children) == 4:  # was != 0
                         node.children[0].parent_node = node_one
                         node.children[1].parent_node = node_one
                         node.children[2].parent_node = node_two
@@ -145,12 +155,13 @@ class TwoThreeTree(object):
                         node_two.children = [node.children[2], node.children[3]]
 
                     new_children = []
+                    # There is only two cases becasue we are dealing with 2-3 trees
                     if data_to_promote >= node.parent_node.data[0]:
                         new_children = [node.parent_node.children[0], node_one, node_two]
                     else:
                         new_children = [node_one, node_two, node.parent_node.children[1]]
                     node.parent_node.children = new_children
-                    node.parent_node.add_data(data_to_promote)
+                    node.parent_node.add_data(data_to_promote) # TODO may want to return index placement
             else:
                 new_l_node = Node(node.data[0])
                 new_r_node = Node(node.data[1])
@@ -158,12 +169,18 @@ class TwoThreeTree(object):
                 new_r_node.parent_node = node.parent_node
 
                 node.parent_node.children.remove(node)
-                if data_to_promote >= node.parent_node.data[0]:
+                # Far right
+                if data_to_promote >= node.parent_node.data[-1]:
                     node.parent_node.children.append(new_l_node)
                     node.parent_node.children.append(new_r_node)
-                else:
-                    node.parent_node.children.insert(0, new_r_node)
+                # Far Left
+                elif data_to_promote < node.parent_node.data[0]:
                     node.parent_node.children.insert(0, new_l_node)
+                    node.parent_node.children.insert(1, new_r_node)
+                # Middle element assuming 2-3 tree
+                else:
+                    node.parent_node.children.insert(1, new_l_node)
+                    node.parent_node.children.insert(2, new_r_node)
                 # Split current node into two (no middle element)
                 # delete old child connection and replace with 2 new
                 self.split_node(data_to_promote, node.parent_node)
@@ -242,4 +259,5 @@ test_tree.insert(0)
 test_tree.insert(2)
 test_tree.insert(45)
 print(test_tree)
+print(test_tree.root.children[0].children[0])
 # print(test_tree.search(30))

@@ -147,6 +147,32 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
         assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
 
+    def test_middle_split(self):
+        ttt = TwoThreeTree()
+        ttt.insert(10)
+        ttt.insert(20)
+        ttt.insert(30)
+        ttt.insert(60)
+        ttt.insert(70)
+        ttt.insert(50)
+        print(ttt)
+        print("**********")
+        ttt.insert(40)
+        print(ttt)
+        assert len(ttt.root.children) == 2
+        assert ttt.root.children[0].data[0] == 20
+        assert ttt.root.children[1].data[0] == 60
+
+        assert len(ttt.root.children[0].children) == 2
+        assert ttt.root.children[0].children[0].data[0] == 10
+        assert ttt.root.children[0].children[1].data[0] == 30
+
+        assert len(ttt.root.children[1].children) == 2
+        assert ttt.root.children[1].children[0].data[0] == 50
+        assert ttt.root.children[1].children[1].data[0] == 70
+
+        # assert
+
     def test_fill_full_three_level(self):
         ttt = TwoThreeTree()
         ttt.insert(4)
