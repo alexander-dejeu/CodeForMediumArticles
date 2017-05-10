@@ -9,26 +9,26 @@ class NodeTest(unittest.TestCase):
         node = Node(data)
         assert node.data[0] == data
         assert len(node.children) == 0
-        assert node.parent_node is None
+        assert node.parent is None
 
     def test_init_list_of_data(self):
         data = [2, 3, 4]
-        node = Node(data)
+        node = Node(*data)
         assert node.data[2] == data[2]
         assert len(node.data) == 3
         assert len(node.children) == 0
-        assert node.parent_node is None
+        assert node.parent is None
 
     def test_init_full(self):
-        parent_node = Node(3)
+        parent = Node(3)
         data = 1
         node_children = [Node(2), Node(4)]
-        node = Node(data, node_children, parent_node)
-        parent_node.children.append(node)
+        node = Node(data, children=node_children, parent=parent)
+        parent.children.append(node)
         assert node.data[0] == 1
-        assert node.parent_node == parent_node
-        assert parent_node.children[0] == node
-        assert len(parent_node.children) == 1
+        assert node.parent == parent
+        assert parent.children[0] == node
+        assert len(parent.children) == 1
         assert len(node.children) == 2
         assert len(node.children[0].children) == 0
 
@@ -44,7 +44,7 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root is not None
         assert ttt.root.data[0] == 4
         assert len(ttt.root.data) == 1
-        assert ttt.root.parent_node is None
+        assert ttt.root.parent is None
         assert len(ttt.root.children) == 0
 
     def test_first_split(self):
@@ -60,10 +60,10 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.data[0] == 7
         assert len(ttt.root.children) == 2
         assert ttt.root.children[0].data[0] == 4
-        assert ttt.root.children[0].parent_node is ttt.root
+        assert ttt.root.children[0].parent is ttt.root
 
         assert ttt.root.children[1].data[0] == 30
-        assert ttt.root.children[1].parent_node is ttt.root
+        assert ttt.root.children[1].parent is ttt.root
 
     def test_split_leaf(self):
         ttt = TwoThreeTree()
@@ -77,9 +77,9 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert len(ttt.root.children[1].data) == 1
         assert len(ttt.root.children[2].data) == 1
 
-        assert ttt.root.children[0].parent_node is ttt.root
-        assert ttt.root.children[1].parent_node is ttt.root
-        assert ttt.root.children[2].parent_node is ttt.root
+        assert ttt.root.children[0].parent is ttt.root
+        assert ttt.root.children[1].parent is ttt.root
+        assert ttt.root.children[2].parent is ttt.root
 
         assert len(ttt.root.data) == 2
         assert ttt.root.data[0] == 4
@@ -108,9 +108,9 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert len(ttt.root.children[0].data) == 2
         assert len(ttt.root.children[1].data) == 2
         assert len(ttt.root.children[2].data) == 2
-        assert ttt.root.children[0].parent_node is ttt.root
-        assert ttt.root.children[1].parent_node is ttt.root
-        assert ttt.root.children[2].parent_node is ttt.root
+        assert ttt.root.children[0].parent is ttt.root
+        assert ttt.root.children[1].parent is ttt.root
+        assert ttt.root.children[2].parent is ttt.root
 
         assert ttt.root.data[0] == 4
         assert ttt.root.data[1] == 7
@@ -138,14 +138,14 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[0].data[0] == 2
         assert ttt.root.children[1].data[0] == 7
 
-        assert ttt.root.children[0].parent_node is ttt.root
-        assert ttt.root.children[1].parent_node is ttt.root
+        assert ttt.root.children[0].parent is ttt.root
+        assert ttt.root.children[1].parent is ttt.root
 
-        assert ttt.root.children[0].children[0].parent_node is ttt.root.children[0]
-        assert ttt.root.children[0].children[1].parent_node is ttt.root.children[0]
+        assert ttt.root.children[0].children[0].parent is ttt.root.children[0]
+        assert ttt.root.children[0].children[1].parent is ttt.root.children[0]
 
-        assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
-        assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
+        assert ttt.root.children[1].children[0].parent is ttt.root.children[1]
+        assert ttt.root.children[1].children[1].parent is ttt.root.children[1]
 
     def test_middle_split(self):
         ttt = TwoThreeTree()
@@ -155,10 +155,8 @@ class TwoThreeTreeTest(unittest.TestCase):
         ttt.insert(60)
         ttt.insert(70)
         ttt.insert(50)
-        print(ttt)
-        print("**********")
         ttt.insert(40)
-        print(ttt)
+
         assert len(ttt.root.children) == 2
         assert ttt.root.children[0].data[0] == 20
         assert ttt.root.children[1].data[0] == 60
@@ -170,8 +168,6 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert len(ttt.root.children[1].children) == 2
         assert ttt.root.children[1].children[0].data[0] == 50
         assert ttt.root.children[1].children[1].data[0] == 70
-
-        # assert
 
     def test_fill_full_three_level(self):
         ttt = TwoThreeTree()
@@ -201,7 +197,7 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert len(ttt.root.children[1].data) == 2
         assert ttt.root.children[0].data[0] == 1
         assert ttt.root.children[0].data[1] == 2
-        assert ttt.root.children[0].children[0].parent_node == ttt.root.children[0]
+        assert ttt.root.children[0].children[0].parent == ttt.root.children[0]
 
     # At this point we are feeling better with the tests because we know
     # our split function can split a few times up the tree without fail
@@ -236,14 +232,14 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[2].data[0] == 41
 
         # Make sure the childen's parent relationships are correct
-        assert ttt.root.children[2].parent_node is ttt.root
-        assert ttt.root.children[2].children[0].parent_node is ttt.root.children[2]
-        assert ttt.root.children[2].children[1].parent_node is ttt.root.children[2]
+        assert ttt.root.children[2].parent is ttt.root
+        assert ttt.root.children[2].children[0].parent is ttt.root.children[2]
+        assert ttt.root.children[2].children[1].parent is ttt.root.children[2]
 
-        assert ttt.root.children[1].children[0].parent_node is ttt.root.children[1]
-        assert ttt.root.children[1].children[1].parent_node is ttt.root.children[1]
+        assert ttt.root.children[1].children[0].parent is ttt.root.children[1]
+        assert ttt.root.children[1].children[1].parent is ttt.root.children[1]
 
-    def nah_test_search(self):
+    def test_search(self):
         ttt = TwoThreeTree()
         ttt.insert(4)
         ttt.insert(30)
@@ -285,6 +281,7 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.search(57) is False
         assert ttt.search(101) is False
         assert ttt.search(124) is False
+
 
 if __name__ == '__main__':
     unittest.main()
