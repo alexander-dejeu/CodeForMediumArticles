@@ -8,6 +8,7 @@ class NodeTest(unittest.TestCase):
         data = 1
         node = Node(data)
         assert node.data[0] == data
+        assert len(node.data) == 1
         assert len(node.children) == 0
         assert node.parent is None
 
@@ -15,6 +16,13 @@ class NodeTest(unittest.TestCase):
         data = [2, 3, 4]
         node = Node(*data)
         assert node.data[2] == data[2]
+        assert len(node.data) == 3
+        assert len(node.children) == 0
+        assert node.parent is None
+
+    def test_init_with_args(self):
+        node = Node(1, 2, 3)
+        assert node.data[2] == 3
         assert len(node.data) == 3
         assert len(node.children) == 0
         assert node.parent is None
@@ -92,8 +100,6 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.root.children[0].data[0] == 3
         assert ttt.root.children[1].data[0] == 5
         assert ttt.root.children[2].data[0] == 30
-
-
 
     def test_full_two_level(self):
         ttt = TwoThreeTree()
@@ -281,6 +287,10 @@ class TwoThreeTreeTest(unittest.TestCase):
         assert ttt.search(57) is False
         assert ttt.search(101) is False
         assert ttt.search(124) is False
+
+
+    def test_search_empty_tree(self):
+        ttt = TwoThreeTree()
 
 
 if __name__ == '__main__':

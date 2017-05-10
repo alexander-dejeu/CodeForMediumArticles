@@ -103,8 +103,7 @@ class TwoThreeTree(object):
                         return self.find_node_value_belongs(value, node.children[index+1])
                 return self.find_node_value_belongs(value, node.children[data_count - 1])
 
-    def split_node(self, value, node):
-        node.add_data(value)
+    def split_node(self, node):
         # The second element is always the middle element because at this
         # point we know this is a leaf with 2 items and we just added another
         # 3 can be generalized to b
@@ -141,31 +140,32 @@ class TwoThreeTree(object):
             node.parent.children.remove(node)
 
             if node.parent.has_space():  # was len(parent.data) == 1
-                    if node.is_internal():  # was != 0
-                        node.children[0].parent = new_l_node
-                        node.children[1].parent = new_l_node
-                        node.children[2].parent = new_r_node
-                        node.children[3].parent = new_r_node
+                if node.is_internal():  # was != 0
+                    node.children[0].parent = new_l_node
+                    node.children[1].parent = new_l_node
+                    node.children[2].parent = new_r_node
+                    node.children[3].parent = new_r_node
 
-                        new_l_node.children = [node.children[0], node.children[1]]
-                        new_r_node.children = [node.children[2], node.children[3]]
+                    new_l_node.children = [node.children[0], node.children[1]]
+                    new_r_node.children = [node.children[2], node.children[3]]
 
-                    # There are only two cases becasue we are dealing with 2-3 trees
-                    if data_to_promote >= node.parent.data[0]:
-                        # The split impacted the right Node so leave left alone
-                        node.parent.children.append(new_l_node)
-                        node.parent.children.append(new_r_node)
-                    else:
-                        # The split impacted the left Node so leave right alone
-                        node.parent.children.insert(0, new_l_node)
-                        node.parent.children.insert(1, new_r_node)
+                # There are only two cases becasue we are dealing with 2-3 trees
+                if data_to_promote >= node.parent.data[0]:
+                    # The split impacted the right Node so leave left alone
+                    node.parent.children.insert(1, new_l_node)
+                    node.parent.children.insert(2, new_r_node)
+                else:
+                    # The split impacted the left Node so leave right alone
+                    node.parent.children.insert(0, new_l_node)
+                    node.parent.children.insert(1, new_r_node)
 
-                    node.parent.add_data(data_to_promote) # TODO may want to return index placement
+                node.parent.add_data(data_to_promote) # TODO may want to return index placement
             else:
                 # Far right
                 if data_to_promote >= node.parent.data[-1]:
-                    node.parent.children.append(new_l_node)
-                    node.parent.children.append(new_r_node)
+                    # Insertion here is to append
+                    node.parent.children.insert(2, new_l_node)
+                    node.parent.children.insert(3, new_r_node)
                 # Far Left
                 elif data_to_promote < node.parent.data[0]:
                     node.parent.children.insert(0, new_l_node)
@@ -176,7 +176,8 @@ class TwoThreeTree(object):
                     node.parent.children.insert(2, new_r_node)
                 # Split current node into two (no middle element)
                 # delete old child connection and replace with 2 new
-                self.split_node(data_to_promote, node.parent)
+                node.parent.add_data(data_to_promote)
+                self.split_node(node.parent)
 
     def insert(self, value):
         ''' 1. If the tree is empty, create a node and put value into the node
@@ -205,7 +206,8 @@ class TwoThreeTree(object):
         # 4. If leaf has more than 2 elements. Split and promote median to parent
         else:
             # 5. Repeat on the parent - worse case form a new root.
-            self.split_node(value, add_to_leaf)
+            add_to_leaf.add_data(value)
+            self.split_node(add_to_leaf)
 
     def search(self, value):
         cur_node = self.root
@@ -223,8 +225,7 @@ class TwoThreeTree(object):
                     for index in range(len(cur_node.data) - 1):
                         if value >= cur_node.data[index] and value < cur_node.data[index + 1]:
                             cur_node = cur_node.children[index+1]
-
-                    # cur_node = cur_node.children[len(cur_node.data) - 1]
+        return False
 
 
 if __name__ == '__main__':
