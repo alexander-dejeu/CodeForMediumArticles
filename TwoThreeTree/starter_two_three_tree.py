@@ -19,13 +19,13 @@ class Node(object):
         # All nodes need to at least have 1 peice of data
         assert len(self.data) > 0
 
-        # New value is less than anything in data
-        if value < self.data[0]:
+        # TODO:  New value is less than anything in data
+        if value < ... :
             self.data.insert(0, value)
             return 0
 
-        # New value is greater than or equal to largest item in data
-        elif value >= self.data[-1]:
+        # TODO: New value is greater than or equal to largest item in data
+        elif value >= ... :
             data_count = len(self.data)
             self.data.append(value)
             return data_count
@@ -39,12 +39,12 @@ class Node(object):
 
     def is_full(self):
         # 2-3 tree nodes are overflowing if they have 3 or more peices of data
-        return len(self.data) >= 3
+        return len(self.data) >= ...  # TODO: When do we know we are overflowing
 
     def has_space(self):
         # 2-3 tree nodes only have an open space for data when they have less
         # than 2 nodes.
-        return len(self.data) < 2
+        return len(self.data) < ...  # TODO: How few peices of data do we need to still have space
 
     def is_leaf(self):
         # Leaves do not have any children by definition
@@ -114,24 +114,26 @@ class TwoThreeTree(object):
         return result_str
 
     def find_node_value_belongs(self, value, node):
-        if node.is_leaf():
+        # TODO : When do we know we reached the final node? Maybe when we are at a leaf?
+        if ... :
             return node
         else:
             data_count = len(node.data)
 
             # Is value less than any existing value in children
             if value < node.data[0]:
-                return self.find_node_value_belongs(value, node.children[0])
+                return ... # TODO: Recursive call to move to next node
 
             # Is value greater than any existing value in children
             elif value > node.data[-1]:
-                return self.find_node_value_belongs(value, node.children[-1])
+                return ... # TODO: Recursive call to move to next node
 
             # Otherwise we have to ping through looking for a valid spot
             else:
                 for index in range(data_count - 1):
                     if value >= node.data[index] and value < node.data[index + 1]:
                         return self.find_node_value_belongs(value, node.children[index+1])
+
                 return self.find_node_value_belongs(value, node.children[data_count - 1])
 
     def split_node(self, node):
@@ -139,14 +141,15 @@ class TwoThreeTree(object):
         # point we know this is a leaf with 2 items and we just added another
         # 3 can be generalized to b
         assert len(node.data) == 3
-        # Remeber data in the middle node and remove middle node to be promoted
-        data_to_promote = node.data[1]
-        node.data.remove(node.data[1])
 
-        # Create new left and right nodes to be created from the current node
-        new_l_node = Node(node.data[0])
-        new_r_node = Node(node.data[1])
+        data_to_promote = ...  # TODO: Remeber data in the middle node
+        node.data.remove( ... )  # TODO: Remove middle node to be promoted
 
+        # TODO: Create new left and right nodes to be created from the existing current node
+        new_l_node = ...
+        new_r_node = ...
+
+        # When spliting the root we need to worry about re assigning the root
         if node == self.root:
             new_root = Node(data_to_promote)
             new_l_node.parent = new_root
@@ -165,6 +168,7 @@ class TwoThreeTree(object):
 
             new_root.children = [new_l_node, new_r_node]
             self.root = new_root
+
         # Not dealing with creating a new root
         else:
             # Create new left and right nodes to be created from the current node
@@ -173,6 +177,7 @@ class TwoThreeTree(object):
 
             node.parent.children.remove(node)
 
+            # The parent has space to just throw in the new data
             if node.parent.has_space():  # was len(parent.data) == 1
                 if node.is_internal():  # was != 0
                     node.children[0].parent = new_l_node
@@ -184,17 +189,19 @@ class TwoThreeTree(object):
                     new_r_node.children = [node.children[2], node.children[3]]
 
                 inserted_at = node.parent.add_data(data_to_promote)
-                # replaced deleted old child with the 2 new one
-                node.parent.children.insert(inserted_at, new_l_node)
-                node.parent.children.insert(inserted_at + 1, new_r_node)
+                # replaced deleted old child with the 2 new ones by inserting
+                node.parent.children.insert( ... , new_l_node)  # TODO: what index should we insert the left node at
+                node.parent.children.insert( ... , new_r_node)  # TODO: what index should we insert the right node at
 
+            # The parent does not have space to just throw in the new data
+            # We need another split
             else:
                 inserted_at = node.parent.add_data(data_to_promote)
                 # replaced deleted old child with the 2 new one
-                node.parent.children.insert(inserted_at, new_l_node)
-                node.parent.children.insert(inserted_at + 1, new_r_node)
+                node.parent.children.insert( ... , new_l_node)  # TODO: what index should we insert the left node at
+                node.parent.children.insert( ... , new_r_node)  # TODO: what index should we insert the right node at
 
-                self.split_node(node.parent)
+                ... # TODO: Do another split
 
     def insert(self, value):
         ''' 1. If the tree is empty, create a node and put value into the node
@@ -208,15 +215,15 @@ class TwoThreeTree(object):
         '''
 
         # 1. If the tree is empty
-        if self.root is None:
-            self.root = Node(value)
+        if self.root is ... :  # TODO: is tree empty?
+            self.root = ...  # TODO: Set the root to new node
             return
 
         # 2. Find leaf where value belongs
-        add_to_leaf = self.find_node_value_belongs(value, self.root)
+        add_to_leaf = self.find_node_value_belongs(value, ...)  # TODO : Where should we start our search?
 
         # 3. If leaf only has one value put the new value there!
-        if add_to_leaf.has_space():
+        if ... :  # TODO: Check if leaf has space
             add_to_leaf.add_data(value)
             return
 
@@ -224,27 +231,27 @@ class TwoThreeTree(object):
         else:
             # 5. Repeat on the parent - worse case form a new root.
             add_to_leaf.add_data(value)
-            self.split_node(add_to_leaf)
+            ...  # TODO: Split
 
     def search(self, value):
-        cur_node = self.root
+        cur_node = ...  # TODO: What node should we start with
 
-        while cur_node is not None:
+        while cur_node is not ... :  # TODO: When should we stop?
             # We have found the value at some point in the tree
-            if value in cur_node.data:
+            if ... :  # TODO : Check if we found the value in the node's data
                 return True
 
             # If we are at a leaf and the above conditional is False
             # then we know this value does not exist in this tree
-            elif len(cur_node.children) == 0:
+            elif ... :  # TODO : check if the cur node is a leaf
                 return False
 
             # Figure out which node to travel to next
             else:
                 if value < cur_node.data[0]:
-                    cur_node = cur_node.children[0]
+                    cur_node = ...  # TODO: Go to the left most child
                 elif value > cur_node.data[-1]:
-                    cur_node = cur_node.children[len(cur_node.data)]
+                    cur_node = ...  # TODO: Go to the right most child
                 else:
                     for index in range(len(cur_node.data) - 1):
                         if value >= cur_node.data[index] and value < cur_node.data[index + 1]:

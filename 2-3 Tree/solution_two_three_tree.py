@@ -236,7 +236,7 @@ class TwoThreeTree(object):
 
             # If we are at a leaf and the above conditional is False
             # then we know this value does not exist in this tree
-            elif cur_node.is_leaf():
+        elif cur_node.is_leaf() == 0:
                 return False
 
             # Figure out which node to travel to next
@@ -244,7 +244,7 @@ class TwoThreeTree(object):
                 if value < cur_node.data[0]:
                     cur_node = cur_node.children[0]
                 elif value > cur_node.data[-1]:
-                    cur_node = cur_node.children[-1]
+                    cur_node = cur_node.children[len(cur_node.data)]
                 else:
                     for index in range(len(cur_node.data) - 1):
                         if value >= cur_node.data[index] and value < cur_node.data[index + 1]:

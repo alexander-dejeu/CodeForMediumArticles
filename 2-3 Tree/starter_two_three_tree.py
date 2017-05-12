@@ -208,15 +208,15 @@ class TwoThreeTree(object):
         '''
 
         # 1. If the tree is empty
-        if self.root is None:
-            self.root = Node(value)
+        if self.root is ... :
+            self.root = ...
             return
 
         # 2. Find leaf where value belongs
-        add_to_leaf = self.find_node_value_belongs(value, self.root)
+        add_to_leaf = self.find_node_value_belongs(value, ...)
 
         # 3. If leaf only has one value put the new value there!
-        if add_to_leaf.has_space():
+        if ... :
             add_to_leaf.add_data(value)
             return
 
@@ -224,19 +224,19 @@ class TwoThreeTree(object):
         else:
             # 5. Repeat on the parent - worse case form a new root.
             add_to_leaf.add_data(value)
-            self.split_node(add_to_leaf)
+            ...
 
     def search(self, value):
-        cur_node = self.root
+        cur_node = ...  # What node should we start with
 
-        while cur_node is not None:
+        while cur_node is not ... :  # When should we stop?
             # We have found the value at some point in the tree
             if value in cur_node.data:
                 return True
 
             # If we are at a leaf and the above conditional is False
             # then we know this value does not exist in this tree
-            elif cur_node.is_leaf():
+            elif cur_node.is_leaf() == 0:
                 return False
 
             # Figure out which node to travel to next
@@ -244,7 +244,7 @@ class TwoThreeTree(object):
                 if value < cur_node.data[0]:
                     cur_node = cur_node.children[0]
                 elif value > cur_node.data[-1]:
-                    cur_node = cur_node.children[-1]
+                    cur_node = cur_node.children[len(cur_node.data)]
                 else:
                     for index in range(len(cur_node.data) - 1):
                         if value >= cur_node.data[index] and value < cur_node.data[index + 1]:
